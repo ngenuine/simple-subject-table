@@ -25,3 +25,6 @@ QVariant SubjectModel::data(const QModelIndex& index, int role) const
     }
     return QVariant();
 }
+
+void SubjectModel::addRow(const subject::User& rowData)
+{}
