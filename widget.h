@@ -1,6 +1,8 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
+#include "subjectmodel.h"
+
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -18,6 +20,7 @@ public:
     ~Widget();
 
 private:
-    Ui::Widget *ui;
+    Ui::Widget*   ui;
+    SubjectModel* m_pModel = nullptr;
 };
 #endif // WIDGET_H

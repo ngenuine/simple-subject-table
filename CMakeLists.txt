@@ -27,7 +27,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Serialization.h
         Types.h
         Serialization.cpp
-
+        Types.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET stc-assignment APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -56,6 +56,7 @@ if(${QT_VERSION} VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.stc-assignment)
 endif()
 set_target_properties(stc-assignment PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}

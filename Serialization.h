@@ -17,8 +17,8 @@ void Serialize(T num, std::ostream& out)
     out.write(reinterpret_cast<const char*>(&num), size);  // Записываем число.
 }
 void       Serialize(const QString& str, std::ostream& out);
-void       Serialize(const User& user, std::ostream& out);
-QByteArray Serialize(const User& user);
+void       Serialize(const subject::User& user, std::ostream& out);
+QByteArray Serialize(const subject::User& user);
 
 template<typename T>
 void Deserialize(std::istream& in, T& num)
@@ -29,7 +29,7 @@ void Deserialize(std::istream& in, T& num)
     in.read(reinterpret_cast<char*>(&num), size);  // Читаем число.
 }
 void Deserialize(std::istream& in, QString& str);
-void Deserialize(std::istream& in, User& user);
-User Deserialize(const QByteArray& ba);
+void          Deserialize(std::istream& in, subject::User& user);
+subject::User Deserialize(const QByteArray& ba);
 
 #endif  // SERIALIZATION_H

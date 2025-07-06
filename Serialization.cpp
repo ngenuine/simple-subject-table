@@ -10,7 +10,7 @@ void Serialize(const QString& str, std::ostream& out)
     out.write(ba.constData(), size);                                // Записываем саму строку.
 }
 
-void Serialize(const User& user, std::ostream& out)
+void Serialize(const subject::User& user, std::ostream& out)
 {
     Serialize(user.id, out);
     Serialize(user.age, out);
@@ -23,7 +23,7 @@ void Serialize(const User& user, std::ostream& out)
     Serialize(user.citizenship, out);
 }
 
-QByteArray Serialize(const User& user)
+QByteArray Serialize(const subject::User& user)
 {
     std::ostringstream out(std::ios::binary);
     Serialize(user, out);
@@ -43,7 +43,7 @@ void Deserialize(std::istream& in, QString& str)
     str = QString::fromUtf8(ba);
 }
 
-void Deserialize(std::istream& in, User& user)
+void Deserialize(std::istream& in, subject::User& user)
 {
     Deserialize(in, user.id);
     Deserialize(in, user.age);
@@ -56,12 +56,12 @@ void Deserialize(std::istream& in, User& user)
     Deserialize(in, user.citizenship);
 }
 
-User Deserialize(const QByteArray& ba)
+subject::User Deserialize(const QByteArray& ba)
 {
     std::string        data(ba.constData(), ba.size());
     std::istringstream in(data, std::ios::binary);
 
-    User user;
+    subject::User user;
     Deserialize(in, user);
     return std::move(user);
 }

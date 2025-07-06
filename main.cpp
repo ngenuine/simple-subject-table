@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     {
-        User user1;
+        subject::User user1;
         user1.id          = 25734;
         user1.age         = 50;
         user1.experience  = 30;
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
         std::ofstream out("test.bin", std::ios::binary);
         Serialize(user1, out);
 
-        User user2;
+        subject::User user2;
         user2.id          = 1234;
         user2.age         = 25;
         user2.experience  = 6;
@@ -40,8 +40,8 @@ int main(int argc, char *argv[])
         Serialize(user2, out);
     }
 
-    User user1;
-    User user2;
+    subject::User user1;
+    subject::User user2;
     {
         std::ifstream in("test.bin", std::ios::binary);
         Deserialize(in, user1);
