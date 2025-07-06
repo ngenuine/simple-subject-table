@@ -1,3 +1,42 @@
-/build
+# Сборочные директории CMake
+build*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cbp
+*.o
+*.obj
+*.so
+*.a
+*.dll
+*.lib
+*.exe
 
+# Qt Creator
+*.autosave
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.qmlproject.user
+*.qmlproject.user.*
+.qmake.stash
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Qt ui-файлы
+ui_*.h
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+
+# Временные файлы
+*.log
+*.tmp
+
+# Сгенерированные IDE файлы
 *.user
+*.user.*
