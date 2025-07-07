@@ -31,10 +31,10 @@ private:
     Ui::Widget*   ui;
     SubjectModel* m_pModel = nullptr;
 
-    void XorBuffer(QByteArray& ba, char key = 0);
+    void XorBuffer(QByteArray& ba, char key = 0) const;
 };
 
-inline void Widget::XorBuffer(QByteArray& ba, char key)
+inline void Widget::XorBuffer(QByteArray& ba, char key) const
 {
     for (int i = 0; i < ba.size(); ++i)
         ba[i] ^= key;

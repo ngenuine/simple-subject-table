@@ -19,8 +19,13 @@ Widget::Widget(QWidget* parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    setFixedSize(1000, 500);
+
     m_pModel = new SubjectModel(this);
     ui->tableView->setModel(m_pModel);
+
+    connect(m_pModel, &QAbstractItemModel::dataChanged, this, [this]() { ui->tableView->resizeColumnsToContents(); });
+    connect(m_pModel, &QAbstractItemModel::modelReset, this, [this]() { ui->tableView->resizeColumnsToContents(); });
 }
 
 Widget::~Widget()
@@ -46,8 +51,11 @@ void Widget::on_writeFileBtn_clicked()
     {
         uint8_t seed     = dialog.GetSeed();
         QString fileName = QFileDialog::getSaveFileName(
-            this, "Сохранить", QDir::homePath() + "/data.bin", "Файл данных (*.bin);;Все файлы (*)");
+            this, "Сохранить", QDir::homePath() + "/data.bin", "Файл данных (*.bin);;КС (*.crc)");
         QByteArray toWriteData;
+
+        if (fileName.isEmpty())
+            return;
 
         uint64_t count = 0;
         for (const auto& user : m_pModel->GetData())
@@ -64,10 +72,14 @@ void Widget::on_writeFileBtn_clicked()
 
         XorBuffer(result, seed);
 
-        uint32_t crc32    = calculateCRC32(result);
-        QString  crcLabel = QString("0x%1").arg(crc32, 8, 16, QLatin1Char('0'));
+        uint32_t crc32 = calculateCRC32(result);
 
-        ui->crcLabel->setText(ui->crcLabel->text() + " " + crcLabel);
+        ui->crcLabel->setText("crc: ");
+        ui->crcLabel->setText(ui->crcLabel->text() + " " + QString::number(crc32));
+
+        QString crcFileName =
+            QFileInfo(fileName).absolutePath() + "/" + QFileInfo(fileName).completeBaseName() + ".crc";
+        std::ofstream(crcFileName.toStdString()) << crc32;
 
         std::ofstream out(fileName.toStdString(), std::ios::binary);
         out.write(result.constData(), result.size());
@@ -82,40 +94,64 @@ void Widget::on_checkFileBtn_clicked()
     {
         uint8_t seed = dialog.GetSeed();
         QString fileName =
-            QFileDialog::getOpenFileName(this, tr("Открыть"), QDir::homePath(), "Файл данных (*.bin);;Все файлы (*)");
+            QFileDialog::getOpenFileName(this, tr("Открыть"), QDir::homePath(), "Файл данных (*.bin);;КС (*.crc)");
+        if (fileName.isEmpty())
+            return;
+
         std::ifstream in(fileName.toStdString(), std::ios::binary);
-
-        QByteArray countBa(sizeof(uint64_t), Qt::Uninitialized);
-        in.read(countBa.data(), countBa.size());
-        XorBuffer(countBa, seed);
-        uint64_t             count = 0;
-        const unsigned char* bytes = reinterpret_cast<const uchar*>(countBa.constData());
-        for (int i = 0; i < sizeof(uint64_t); ++i)
-            count |= static_cast<uint64_t>(bytes[i]) << (i * 8);
-
-        if (count > 1000)  // Искусственное ограничение количества пользователей
+        auto          fileSize = [](std::istream& in)
         {
-            // Если seed введен неверно, то count может стать очень большим и программа зависнет
+            std::streampos currentPos = in.tellg();
+            in.seekg(0, std::ios::end);
+            std::streamsize endPos = in.tellg();
+            std::streamsize size   = endPos - currentPos;
+            in.seekg(currentPos);
+
+            return size;
+        }(in);
+
+        QByteArray fullFileBa(fileSize, Qt::Uninitialized);
+        in.read(fullFileBa.data(), fullFileBa.size());
+
+        QString crcFileName =
+            QFileInfo(fileName).absolutePath() + "/" + QFileInfo(fileName).completeBaseName() + ".crc";
+        if (!QFileInfo(fileName).exists())
+        {
+            QMessageBox::critical(nullptr, "Ошибка", "Соответствующий файл с контрольной суммой не найден");
+            return;
+        }
+
+        uint32_t crc32;
+        std::ifstream(crcFileName.toStdString()) >> crc32;
+        if (crc32 != calculateCRC32(fullFileBa))
+        {
+            QMessageBox::critical(nullptr, "Ошибка", "Неверная контрольная сумма. Файл поврежден");
+            return;
+        }
+
+        ui->crcLabel->setText("crc: ");
+        ui->crcLabel->setText(ui->crcLabel->text() + " " + QString::number(crc32));
+
+        XorBuffer(fullFileBa, seed);
+
+        // copy-on-write (не копии)
+        QByteArray countBa(fullFileBa.data(), sizeof(uint64_t));
+        QByteArray dataBa(fullFileBa.data() + sizeof(uint64_t), fullFileBa.size() - sizeof(uint64_t));
+
+        uint64_t count = 0;
+        for (int i = 0; i < sizeof(uint64_t); ++i)
+            count |= static_cast<uint64_t>(static_cast<unsigned char>(countBa[i])) << (i * 8);
+
+        if (count > 1000)
+        {
+            /* Искусственное ограничение количества пользователей если seed введен неверно, то count может стать очень
+             * большим и программа зависнет, т.к. count используется в дальнейшей в цикле */
             QMessageBox::critical(nullptr, "Ошибка подсчета пользователей", "Возможно, шифрующее число неверно");
             m_pModel->SetData(std::vector<subject::User>{});
             return;
         }
 
-        auto remainingSize = [this, seed](std::istream& in)
-        {
-            std::streampos currentPos = in.tellg();
-            in.seekg(0, std::ios::end);
-            std::streamsize endPos        = in.tellg();
-            std::streamsize remainingSize = endPos - currentPos;
-            in.seekg(currentPos);
-
-            return remainingSize;
-        }(in);
-        QByteArray ba(remainingSize, Qt::Uninitialized);
-        in.read(ba.data(), ba.size());
-        XorBuffer(ba, seed);
-
-        std::istringstream iss(std::string(ba.constData(), ba.size()), std::ios::binary);
+        std::istringstream iss(std::string(dataBa.constData(), dataBa.size()), std::ios::binary);
 
         std::vector<subject::User> users;
         while (count-- > 0)
