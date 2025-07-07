@@ -1,6 +1,7 @@
 #include "subjectmodel.h"
 #include "Types.h"
 
+#include <QMessageBox>
 #include <QVariant>
 
 SubjectModel::SubjectModel(QObject *parent)
@@ -67,6 +68,15 @@ QVariant SubjectModel::headerData(int section, Qt::Orientation orientation, int 
 
 void SubjectModel::addRow(const subject::User& rowData)
 {
+    auto res = std::count_if(
+        m_users.begin(), m_users.end(), [id = rowData.id](const subject::User& user) { return id == user.id; });
+    if (res > 0)
+    {
+        QMessageBox::warning(
+            nullptr, "Предупреждение", "Такой пользователь уже существует. Пользователь не будет добавлен.");
+        return;
+    }
+
     beginInsertRows(QModelIndex(), m_users.size(), m_users.size());
     m_users.push_back(rowData);
     endInsertRows();
