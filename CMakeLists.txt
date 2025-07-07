@@ -29,6 +29,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Serialization.cpp
         Types.cpp
         adduser.h adduser.cpp adduser.ui
+        seed.h seed.cpp seed.ui
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET stc-assignment APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

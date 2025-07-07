@@ -1,6 +1,8 @@
 #ifndef ADDUSER_H
 #define ADDUSER_H
 
+#include "Types.h"
+
 #include <QDialog>
 
 namespace Ui
@@ -16,8 +18,16 @@ public:
     explicit AddUser(QWidget* parent = nullptr);
     ~AddUser();
 
+    subject::User User() const;
+
+private slots:
+    void on_applyBtn_clicked();
+
+    void on_rejectBtn_clicked();
+
 private:
-    Ui::AddUser* ui;
+    Ui::AddUser*  ui;
+    subject::User m_user;
 };
 
 #endif  // ADDUSER_H

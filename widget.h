@@ -19,6 +19,10 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+private slots:
+
+    void on_addUserBtn_clicked();
+
 private:
     Ui::Widget*   ui;
     SubjectModel* m_pModel = nullptr;

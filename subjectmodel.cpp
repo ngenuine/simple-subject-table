@@ -19,12 +19,55 @@ int SubjectModel::columnCount(const QModelIndex& parent) const
 
 QVariant SubjectModel::data(const QModelIndex& index, int role) const
 {
+    using subject::Field;
     if (role == Qt::DisplayRole)
     {
-        return QVariant("Ничего");
+        if (index.row() >= m_users.size())
+            return QVariant("Out of range");
+        const subject::User& user = m_users.at(index.row());
+
+        switch (static_cast<Field>(index.column()))
+        {
+        case Field::ID:
+            return QVariant::fromValue(static_cast<quint64>(user.id));
+        case Field::AGE:
+            return QVariant::fromValue(static_cast<int>(user.age));
+        case Field::EXP:
+            return QVariant::fromValue(static_cast<int>(user.experience));
+        case Field::GENDER:
+            return QVariant(user.gender == Gender::FEMALE ? "жен." : "муж.");
+        case Field::LAST_NAME:
+            return QVariant(user.lastName);
+        case Field::FIRST_NAME:
+            return QVariant(user.firstName);
+        case Field::MID_NAME:
+            return QVariant(user.middleName);
+        case Field::PHONE:
+            return QVariant(user.phoneNumber);
+        case Field::CITIZENSHIP:
+            return QVariant(user.citizenship);
+        default:
+            break;
+        }
+        return QVariant("---");
     }
     return QVariant();
 }
 
+QVariant SubjectModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    using namespace subject;
+    if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
+    {
+        return ToString(static_cast<Field>(section));
+    }
+
+    return QVariant();
+}
+
 void SubjectModel::addRow(const subject::User& rowData)
-{}
+{
+    beginInsertRows(QModelIndex(), m_users.size(), m_users.size());
+    m_users.push_back(rowData);
+    endInsertRows();
+}
