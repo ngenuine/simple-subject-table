@@ -32,6 +32,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         Common/Types.h Common/Types.cpp
         Dialog/adduser.h Dialog/adduser.cpp UI/adduser.ui
         Dialog/seed.h Dialog/seed.cpp UI/seed.ui
+        Crc32/crc32.h Crc32/crc32.cpp
     )
 
 target_include_directories(stc-assignment PRIVATE

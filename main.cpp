@@ -56,10 +56,14 @@ void test()
     subject::User user1;
     subject::User user2;
     {
+        uint64_t      count;
         std::ifstream in("test.bin", std::ios::binary);
+        in.read(reinterpret_cast<char*>(&count), sizeof(count));
         Deserialize(in, user1);
         Deserialize(in, user2);
     }
+
+    qDebug() << "[[[ main.cpp::test()\n";
 
     qDebug() << user1.id << " " << user1.age << " " << user1.experience << " "
              << (user1.gender == Gender::FEMALE ? "FEMALE" : "MALE") << " " << user1.lastName << " " << user1.firstName
@@ -68,4 +72,6 @@ void test()
     qDebug() << user2.id << " " << user2.age << " " << user2.experience << " "
              << (user2.gender == Gender::FEMALE ? "FEMALE" : "MALE") << " " << user2.lastName << " " << user2.firstName
              << " " << user2.middleName << " " << user2.phoneNumber << " " << user2.citizenship;
+
+    qDebug() << "\nmain.cpp::test() ]]]";
 }

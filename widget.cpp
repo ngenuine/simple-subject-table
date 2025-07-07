@@ -1,6 +1,7 @@
 #include "widget.h"
 #include "ui_widget.h"
 
+#include "Crc32/crc32.h"
 #include "Dialog/adduser.h"
 #include "Dialog/seed.h"
 #include "Model/subjectmodel.h"
@@ -62,6 +63,11 @@ void Widget::on_writeFileBtn_clicked()
         result.append(toWriteData);
 
         XorBuffer(result, seed);
+
+        uint32_t crc32    = calculateCRC32(result);
+        QString  crcLabel = QString("0x%1").arg(crc32, 8, 16, QLatin1Char('0'));
+
+        ui->crcLabel->setText(ui->crcLabel->text() + " " + crcLabel);
 
         std::ofstream out(fileName.toStdString(), std::ios::binary);
         out.write(result.constData(), result.size());
