@@ -81,15 +81,32 @@ void Widget::on_checkFileBtn_clicked()
         QByteArray countBa(sizeof(uint64_t), Qt::Uninitialized);
         in.read(countBa.data(), countBa.size());
         XorBuffer(countBa, seed);
-        uint64_t count = 0;
+        uint64_t             count = 0;
+        const unsigned char* bytes = reinterpret_cast<const uchar*>(countBa.constData());
+        for (int i = 0; i < sizeof(uint64_t); ++i)
+            count |= static_cast<uint64_t>(bytes[i]) << (i * 8);
+
+        auto remainingSize = [this, seed](std::istream& in)
+        {
+            std::streampos currentPos = in.tellg();
+            in.seekg(0, std::ios::end);
+            std::streamsize endPos        = in.tellg();
+            std::streamsize remainingSize = endPos - currentPos;
+            in.seekg(currentPos);
+
+            return remainingSize;
+        }(in);
+        QByteArray ba(remainingSize, Qt::Uninitialized);
+        in.read(ba.data(), ba.size());
+        XorBuffer(ba, seed);
+
+        std::istringstream iss(std::string(ba.constData(), ba.size()), std::ios::binary);
 
         std::vector<subject::User> users;
-
-        in.read(reinterpret_cast<char*>(&count), sizeof(count));
         while (count-- > 0)
         {
             subject::User user;
-            Deserialize(in, user);
+            Deserialize(iss, user);
             users.push_back(std::move(user));
         }
 
