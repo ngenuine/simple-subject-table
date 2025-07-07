@@ -82,6 +82,16 @@ void SubjectModel::addRow(const subject::User& rowData)
     endInsertRows();
 }
 
+void SubjectModel::removeRow(uint64_t index)
+{
+    if (index >= m_users.size())
+        return;
+
+    beginRemoveRows(QModelIndex(), static_cast<int>(index), static_cast<int>(index));
+    m_users.erase(m_users.begin() + index);
+    endRemoveRows();
+}
+
 const std::vector<subject::User>& SubjectModel::GetData() const
 {
     return m_users;

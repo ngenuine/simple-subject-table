@@ -26,6 +26,12 @@ Widget::Widget(QWidget* parent)
 
     connect(m_pModel, &QAbstractItemModel::dataChanged, this, [this]() { ui->tableView->resizeColumnsToContents(); });
     connect(m_pModel, &QAbstractItemModel::modelReset, this, [this]() { ui->tableView->resizeColumnsToContents(); });
+
+    // Выделение строк полностью.
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+    ui->addUserBtn->setToolTip("При выделенной строке диалог заполнится ее значениями");
+    ui->addUserBtn->setToolTipDuration(2000);
 }
 
 Widget::~Widget()
@@ -35,11 +41,24 @@ Widget::~Widget()
 
 void Widget::on_addUserBtn_clicked()
 {
-    AddUser dialog;
-    int     result = dialog.exec();
-    if (result == QDialog::Accepted)
+    int                      result  = QDialog::Rejected;
+    std::shared_ptr<AddUser> pDialog = nullptr;
+
+    subject::User   user;
+    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedRows();
+    if (!selectedIndexes.isEmpty())
     {
-        m_pModel->addRow(dialog.User());
+        auto index = selectedIndexes.at(0).row();
+        if (index >= m_pModel->GetData().size())
+            return;
+        user = m_pModel->GetData().at(index);
+    }
+
+    pDialog = std::make_shared<AddUser>(user);
+
+    if (pDialog && pDialog->exec() == QDialog::Accepted)
+    {
+        m_pModel->addRow(pDialog->User());
     }
 }
 
@@ -163,4 +182,11 @@ void Widget::on_checkFileBtn_clicked()
 
         m_pModel->SetData(users);
     }
+}
+
+void Widget::on_deleteUser_clicked()
+{
+    QModelIndexList selectedIndexes = ui->tableView->selectionModel()->selectedRows();
+    for (const auto& index : selectedIndexes)
+        m_pModel->removeRow(index.row());
 }

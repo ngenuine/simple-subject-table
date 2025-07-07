@@ -16,6 +16,7 @@ class AddUser : public QDialog
 
 public:
     explicit AddUser(QWidget* parent = nullptr);
+    explicit AddUser(subject::User user, QWidget* parent = nullptr);
     ~AddUser();
 
     subject::User User() const;

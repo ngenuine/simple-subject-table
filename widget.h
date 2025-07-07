@@ -27,6 +27,8 @@ private slots:
 
     void on_checkFileBtn_clicked();
 
+    void on_deleteUser_clicked();
+
 private:
     Ui::Widget*   ui;
     SubjectModel* m_pModel = nullptr;

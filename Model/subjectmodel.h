@@ -18,6 +18,7 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
     void addRow(const subject::User& rowData);
+    void                              removeRow(uint64_t index);
     const std::vector<subject::User>& GetData() const;
     void                              SetData(const std::vector<subject::User>& data);
 

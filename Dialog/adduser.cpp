@@ -10,6 +10,24 @@ AddUser::AddUser(QWidget* parent)
     ui->setupUi(this);
 }
 
+AddUser::AddUser(subject::User user, QWidget* parent)
+    : AddUser(parent)
+{
+    ui->ageSpin->setValue(user.age);
+    ui->experienceSpin->setValue(user.experience);
+
+    if (user.gender == Gender::MALE)
+        ui->maleRadio->setChecked(true);
+    else
+        ui->femaleRadio->setChecked(true);
+
+    ui->lastNameEdit->setText(user.lastName);
+    ui->firstNameEdit->setText(user.firstName);
+    ui->middleNameEdit->setText(user.middleName);
+    ui->phoneEdit->setText(user.phoneNumber);
+    ui->citizenshipEdit->setText(user.citizenship);
+}
+
 AddUser::~AddUser()
 {
     delete ui;
