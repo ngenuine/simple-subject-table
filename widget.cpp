@@ -45,18 +45,25 @@ void Widget::on_writeFileBtn_clicked()
         uint8_t seed     = dialog.GetSeed();
         QString fileName = QFileDialog::getSaveFileName(
             this, "Сохранить", QDir::homePath() + "/data.bin", "Файл данных (*.bin);;Все файлы (*)");
-        QByteArray toWrite;
+        QByteArray toWriteData;
 
         uint64_t count = 0;
         for (const auto& user : m_pModel->GetData())
         {
             QByteArray ba = Serialize(user);
-            toWrite.append(ba);
+            toWriteData.append(ba);
             ++count;
         }
-        std::ofstream out(fileName.toStdString(), std::ios::binary);  // tostdwstring попробовать
-        out.write(reinterpret_cast<char*>(&count), sizeof(count));
-        out.write(toWrite.constData(), toWrite.size());
+        QByteArray toWriteCount(reinterpret_cast<char*>(&count), sizeof(count));
+
+        QByteArray result;
+        result.append(toWriteCount);
+        result.append(toWriteData);
+
+        XorBuffer(result, seed);
+
+        std::ofstream out(fileName.toStdString(), std::ios::binary);
+        out.write(result.constData(), result.size());
     }
 }
 
@@ -69,10 +76,15 @@ void Widget::on_checkFileBtn_clicked()
         uint8_t seed = dialog.GetSeed();
         QString fileName =
             QFileDialog::getOpenFileName(this, tr("Открыть"), QDir::homePath(), "Файл данных (*.bin);;Все файлы (*)");
-        std::ifstream in(fileName.toStdString(), std::ios::binary);  // tostdwstring попробовать
+        std::ifstream in(fileName.toStdString(), std::ios::binary);
+
+        QByteArray countBa(sizeof(uint64_t), Qt::Uninitialized);
+        in.read(countBa.data(), countBa.size());
+        XorBuffer(countBa, seed);
+        uint64_t count = 0;
 
         std::vector<subject::User> users;
-        uint64_t                   count = 0;
+
         in.read(reinterpret_cast<char*>(&count), sizeof(count));
         while (count-- > 0)
         {
