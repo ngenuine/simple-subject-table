@@ -13,3 +13,20 @@ Seed::~Seed()
 {
     delete ui;
 }
+
+char Seed::GetSeed() const
+{
+    return m_seed;
+}
+
+void Seed::on_acceptBtn_clicked()
+{
+    m_seed = ui->seedBox->value() % 256;
+    accept();
+}
+
+void Seed::on_rejectBtn_clicked()
+{
+    m_seed = 0;
+    reject();
+}

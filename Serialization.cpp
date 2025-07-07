@@ -29,7 +29,7 @@ QByteArray Serialize(const subject::User& user)
     Serialize(user, out);
 
     const std::string& data = out.str();
-    return QByteArray::fromRawData(data.data(), data.size());
+    return QByteArray::fromStdString(out.str());
 }
 
 void Deserialize(std::istream& in, QString& str)

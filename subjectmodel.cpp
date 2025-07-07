@@ -81,3 +81,15 @@ void SubjectModel::addRow(const subject::User& rowData)
     m_users.push_back(rowData);
     endInsertRows();
 }
+
+const std::vector<subject::User>& SubjectModel::GetData() const
+{
+    return m_users;
+}
+
+void SubjectModel::SetData(const std::vector<subject::User>& data)
+{
+    beginResetModel();
+    m_users = data;
+    endResetModel();
+}

@@ -15,6 +15,12 @@ class Seed : public QDialog
 public:
     explicit Seed(QWidget* parent = nullptr);
     ~Seed();
+    char GetSeed() const;
+
+private slots:
+    void on_acceptBtn_clicked();
+
+    void on_rejectBtn_clicked();
 
 private:
     Ui::Seed* ui;

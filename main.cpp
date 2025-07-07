@@ -8,10 +8,21 @@
 
 #include <fstream>
 
+void test();
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    Widget w;
 
+    test();
+
+    w.show();
+    return a.exec();
+}
+
+void test()
+{
     {
         subject::User user1;
         user1.id          = 25734;
@@ -24,9 +35,6 @@ int main(int argc, char *argv[])
         user1.phoneNumber = "+7-292-467-32-05";
         user1.citizenship = "Австралия";
 
-        std::ofstream out("test.bin", std::ios::binary);
-        Serialize(user1, out);
-
         subject::User user2;
         user2.id          = 1234;
         user2.age         = 25;
@@ -37,6 +45,11 @@ int main(int argc, char *argv[])
         user2.middleName  = "Отчество_2";
         user2.phoneNumber = "8-313-000-92-15";
         user2.citizenship = "Новая Zeland";
+
+        std::ofstream out("test.bin", std::ios::binary);
+        uint64_t      count = 2;  // Количество записей.
+        out.write(reinterpret_cast<char*>(&count), sizeof(count));
+        Serialize(user1, out);
         Serialize(user2, out);
     }
 
@@ -55,7 +68,4 @@ int main(int argc, char *argv[])
     qDebug() << user2.id << " " << user2.age << " " << user2.experience << " "
              << (user2.gender == Gender::FEMALE ? "FEMALE" : "MALE") << " " << user2.lastName << " " << user2.firstName
              << " " << user2.middleName << " " << user2.phoneNumber << " " << user2.citizenship;
-    Widget w;
-    w.show();
-    return a.exec();
 }

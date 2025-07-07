@@ -23,8 +23,20 @@ private slots:
 
     void on_addUserBtn_clicked();
 
+    void on_writeFileBtn_clicked();
+
+    void on_checkFileBtn_clicked();
+
 private:
     Ui::Widget*   ui;
     SubjectModel* m_pModel = nullptr;
+
+    void XorBuffer(QByteArray& ba, char key = 0);
 };
+
+inline void Widget::XorBuffer(QByteArray& ba, char key)
+{
+    for (int i = 0; i < ba.size(); ++i)
+        ba[i] ^= key;
+}
 #endif // WIDGET_H
