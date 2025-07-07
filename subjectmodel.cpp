@@ -31,9 +31,9 @@ QVariant SubjectModel::data(const QModelIndex& index, int role) const
         case Field::ID:
             return QVariant::fromValue(static_cast<quint64>(user.id));
         case Field::AGE:
-            return QVariant::fromValue(static_cast<int>(user.age));
+            return QVariant::fromValue(static_cast<quint16>(user.age));  // Каст к 16, т.к. 8 считается символом.
         case Field::EXP:
-            return QVariant::fromValue(static_cast<int>(user.experience));
+            return QVariant::fromValue(static_cast<quint16>(user.experience));
         case Field::GENDER:
             return QVariant(user.gender == Gender::FEMALE ? "жен." : "муж.");
         case Field::LAST_NAME:
