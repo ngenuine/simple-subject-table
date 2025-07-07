@@ -1,7 +1,7 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include "subjectmodel.h"
+#include "Model/subjectmodel.h"
 
 #include <QWidget>
 

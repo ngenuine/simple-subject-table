@@ -1,5 +1,5 @@
-#include "subjectmodel.h"
-#include "Types.h"
+#include "Model/subjectmodel.h"
+#include "Common/Types.h"
 
 #include <QMessageBox>
 #include <QVariant>

@@ -1,7 +1,7 @@
 #ifndef SERIALIZATION_H
 #define SERIALIZATION_H
 
-#include "Types.h"
+#include "Common/Types.h"
 
 #include <QString>
 #include <cstdint>

@@ -1,7 +1,7 @@
 #ifndef ADDUSER_H
 #define ADDUSER_H
 
-#include "Types.h"
+#include "Common/Types.h"
 
 #include <QDialog>
 

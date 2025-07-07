@@ -1,7 +1,7 @@
 #ifndef SUBJECTMODEL_H
 #define SUBJECTMODEL_H
 
-#include "Types.h"
+#include "Common/Types.h"
 
 #include <QAbstractTableModel>
 #include <QObject>

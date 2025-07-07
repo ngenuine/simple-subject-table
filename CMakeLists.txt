@@ -16,21 +16,28 @@ set(PROJECT_SOURCES
         main.cpp
         widget.cpp
         widget.h
-        widget.ui
+        UI/widget.ui
+)
+
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+    ${CMAKE_CURRENT_SOURCE_DIR}/UI
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(stc-assignment
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        subjectmodel.h subjectmodel.cpp
-        Serialization.h
-        Types.h
-        Serialization.cpp
-        Types.cpp
-        adduser.h adduser.cpp adduser.ui
-        seed.h seed.cpp seed.ui
+        Model/subjectmodel.h Model/subjectmodel.cpp
+        Serialization/Serialization.h Serialization/Serialization.cpp
+        Common/Types.h Common/Types.cpp
+        Dialog/adduser.h Dialog/adduser.cpp UI/adduser.ui
+        Dialog/seed.h Dialog/seed.cpp UI/seed.ui
     )
+
+target_include_directories(stc-assignment PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET stc-assignment APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)

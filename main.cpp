@@ -1,7 +1,7 @@
 #include "widget.h"
 
-#include "Serialization.h"
-#include "Types.h"
+#include "Common/Types.h"
+#include "Serialization/Serialization.h"
 
 #include <QApplication>
 #include <QDebug>

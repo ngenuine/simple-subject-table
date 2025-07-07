@@ -1,7 +1,7 @@
-#include "adduser.h"
+#include "Dialog/adduser.h"
 #include "ui_adduser.h"
 
-#include "Types.h"
+#include "Common/Types.h"
 
 AddUser::AddUser(QWidget* parent)
     : QDialog(parent)

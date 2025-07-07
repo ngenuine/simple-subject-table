@@ -1,10 +1,10 @@
 #include "widget.h"
-#include "./ui_widget.h"
+#include "ui_widget.h"
 
-#include "Serialization.h"
-#include "adduser.h"
-#include "seed.h"
-#include "subjectmodel.h"
+#include "Dialog/adduser.h"
+#include "Dialog/seed.h"
+#include "Model/subjectmodel.h"
+#include "Serialization/Serialization.h"
 
 #include <QDialog>
 #include <QDir>

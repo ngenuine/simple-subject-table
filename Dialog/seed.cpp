@@ -1,4 +1,4 @@
-#include "seed.h"
+#include "Dialog/seed.h"
 #include "ui_seed.h"
 
 Seed::Seed(QWidget* parent)
