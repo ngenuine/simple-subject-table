@@ -9,6 +9,7 @@
 #include <QDialog>
 #include <QDir>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include <fstream>
 
@@ -85,6 +86,14 @@ void Widget::on_checkFileBtn_clicked()
         const unsigned char* bytes = reinterpret_cast<const uchar*>(countBa.constData());
         for (int i = 0; i < sizeof(uint64_t); ++i)
             count |= static_cast<uint64_t>(bytes[i]) << (i * 8);
+
+        if (count > 1000)  // Искусственное ограничение количества пользователей
+        {
+            // Если seed введен неверно, то count может стать очень большим и программа зависнет
+            QMessageBox::critical(nullptr, "Ошибка подсчета пользователей", "Возможно, шифрующее число неверно");
+            m_pModel->SetData(std::vector<subject::User>{});
+            return;
+        }
 
         auto remainingSize = [this, seed](std::istream& in)
         {
