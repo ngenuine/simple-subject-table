@@ -36,6 +36,6 @@ QString subject::ToString(Field field)
 uint subject::hhash(const subject::User& key, uint seed)
 {
     return qHashMulti(
-        seed, key.age, key.experience, key.gender, key.lastName, key.firstName, key.middleName, key.phoneNumber,
-        key.citizenship);
+        seed, key.age, key.experience, static_cast<uint8_t>(key.gender), key.lastName, key.firstName, key.middleName,
+        key.phoneNumber, key.citizenship);
 }
