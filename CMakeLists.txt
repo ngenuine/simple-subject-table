@@ -12,11 +12,33 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
+message(STATUS "Using Qt version ${QT_VERSION_MAJOR}")
+
+set(PROJECT_HEADERS
+    widget.h
+    Model/subjectmodel.h
+    Serialization/Serialization.h
+    Common/Types.h
+    Dialog/adduser.h
+    Dialog/seed.h
+    Crc32/crc32.h
+)
+
 set(PROJECT_SOURCES
-        main.cpp
-        widget.cpp
-        widget.h
-        UI/widget.ui
+    main.cpp
+    widget.cpp
+    Model/subjectmodel.cpp
+    Serialization/Serialization.cpp
+    Common/Types.cpp
+    Dialog/adduser.cpp
+    Dialog/seed.cpp
+    Crc32/crc32.cpp
+)
+
+set(PROJECT_UIS
+    UI/widget.ui
+    UI/adduser.ui
+    UI/seed.ui
 )
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS
@@ -27,50 +49,26 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(stc-assignment
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        Model/subjectmodel.h Model/subjectmodel.cpp
-        Serialization/Serialization.h Serialization/Serialization.cpp
-        Common/Types.h Common/Types.cpp
-        Dialog/adduser.h Dialog/adduser.cpp UI/adduser.ui
-        Dialog/seed.h Dialog/seed.cpp UI/seed.ui
-        Crc32/crc32.h Crc32/crc32.cpp
+        ${PROJECT_HEADERS}
+        ${PROJECT_UIS}
     )
+    qt_finalize_executable(stc-assignment)
+else()
+    add_executable(stc-assignment
+        ${PROJECT_SOURCES}
+        ${PROJECT_HEADERS}
+        ${PROJECT_UIS}
+    )
+endif()
 
 target_include_directories(stc-assignment PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET stc-assignment APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(stc-assignment SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(stc-assignment
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
-
 target_link_libraries(stc-assignment PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.stc-assignment)
-endif()
 set_target_properties(stc-assignment PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-    ${BUNDLE_ID_OPTION}
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
 
@@ -80,7 +78,3 @@ install(TARGETS stc-assignment
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(stc-assignment)
-endif()
