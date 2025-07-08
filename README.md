@@ -42,3 +42,4 @@ $ ./bin/stc-assignment
 
 - С++17
 - Qt
+- CMake
