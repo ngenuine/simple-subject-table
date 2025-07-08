@@ -3,6 +3,8 @@
 
 #include <QHash>
 #include <QString>
+
+#include <array>
 #include <cstdint>
 
 enum class Gender : uint8_t

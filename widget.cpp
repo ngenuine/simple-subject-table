@@ -13,6 +13,7 @@
 #include <QMessageBox>
 
 #include <fstream>
+#include <sstream>
 
 Widget::Widget(QWidget* parent)
     : QWidget(parent, Qt::Window | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
